@@ -1,7 +1,6 @@
 module.exports = function (mappings) {
     var bindings = {};
     if (!mappings) mappings = {};
-    var config = { attributes: true, childList: true, characterData: true };
     
     return function (elem, attr) {
         var key = elem.getAttribute(attr);
