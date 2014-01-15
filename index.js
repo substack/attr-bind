@@ -1,11 +1,18 @@
-module.exports = function () {
+module.exports = function (mappings) {
     var bindings = {};
+    if (!mappings) mappings = {};
     var config = { attributes: true, childList: true, characterData: true };
     
     return function (elem, attr) {
-        var key = elem[attr];
+        var key = elem.getAttribute(attr);
         var b = bindings[key];
-        if (!b) b = bindings[key] = { elements: [], value: get(elem) };
+        if (!b) {
+            b = bindings[key] = {
+                elements: [],
+                map: mappings[key] || function (x) { return x }
+            };
+            b.value = b.map(get(elem), elem);
+        }
         else set(elem, b.value);
         
         b.elements.push(elem);
@@ -15,7 +22,7 @@ module.exports = function () {
         elem.addEventListener('keyup', onchange);
         
         function onchange () {
-            var x = get(elem);
+            var x = b.map(get(elem), elem);
             if (x === b.value) return;
             b.value = x;
             
