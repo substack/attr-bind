@@ -24,7 +24,7 @@ var bind = require('attr-bind')();
 
 var elems = document.querySelectorAll('*[binder]');
 for (var i = 0; i < elems.length; i++) {
-    bind(elems[i], 'binder');
+    bind(elems[i], elems[i].getAttribute('binder'));
 }
 ```
 
@@ -40,9 +40,9 @@ var binder = require('attr-bind')
 
 Return a `bind()`
 
-## bind(elem, attrName)
+## bind(elem, group)
 
-Bind the element `elem` into the group named by the attribute `attrName`.
+Bind the element `elem` into the `group` string.
 
 # install
 

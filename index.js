@@ -2,8 +2,7 @@ module.exports = function (mappings) {
     var bindings = {};
     if (!mappings) mappings = {};
     
-    return function (elem, attr) {
-        var key = elem.getAttribute(attr);
+    return function (elem, key) {
         var b = bindings[key];
         if (!b) {
             b = bindings[key] = {
