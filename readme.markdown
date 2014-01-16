@@ -10,9 +10,9 @@
   <body>
     <div>
       <label>Name:</label>
-      <input type="text" binder="yourName" placeholder="Enter a name here">
+      <input type="text" binder="user-name" placeholder="Enter a name here">
       <hr>
-      <h1>Hello <span binder="yourName"></span>!</h1>
+      <h1>Hello <span binder="user-name"></span>!</h1>
     </div>
     <script src="bundle.js"></script>
   </body>
@@ -37,6 +37,17 @@ attr.scan(document);
 ```
 
 Now the contents of the span tag update as you edit the input box.
+
+If you want to capture the updated values programmatically, you can pass in an
+[observable](https://npmjs.org/package/observable) in place of an element:
+
+``` js
+var watch = require('observable')();
+watch(function (value) {
+    console.log('value=' + value);
+});
+bind(watch, 'user-name');
+```
 
 # methods
 
