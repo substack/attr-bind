@@ -19,13 +19,21 @@
 </html>
 ```
 
-```
+``` js
 var bind = require('attr-bind')();
 
 var elems = document.querySelectorAll('*[binder]');
 for (var i = 0; i < elems.length; i++) {
     bind(elems[i], elems[i].getAttribute('binder'));
 }
+```
+
+or you can use [attractor](https://npmjs.org/package/attractor):
+
+``` js
+var bind = require('attr-bind')();
+var attr = require('attractor')({ binder: bind });
+attr.scan(document);
 ```
 
 Now the contents of the span tag update as you edit the input box.
