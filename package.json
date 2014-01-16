@@ -1,6 +1,6 @@
 {
   "name": "attr-bind",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "2-way dom element binding",
   "main": "index.js",
   "dependencies": {},
