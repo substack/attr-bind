@@ -23,7 +23,9 @@
     "browser",
     "reactive",
     "declarative",
-    "html"
+    "html",
+    "attr",
+    "attractor"
   ],
   "author": {
     "name": "James Halliday",
