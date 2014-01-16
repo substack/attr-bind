@@ -15,9 +15,14 @@ module.exports = function (mappings) {
         
         b.elements.push(elem);
         
-        elem.addEventListener('change', onchange);
-        elem.addEventListener('keydown', onchange);
-        elem.addEventListener('keyup', onchange);
+        if (typeof elem === 'function') {
+            elem(onchange);
+        }
+        else {
+            elem.addEventListener('change', onchange);
+            elem.addEventListener('keydown', onchange);
+            elem.addEventListener('keyup', onchange);
+        }
         
         function onchange () {
             var x = b.map(get(elem), elem);
@@ -33,6 +38,7 @@ module.exports = function (mappings) {
     
     function set (elem, value) {
         if (typeof value !== 'string') value = String(value);
+        if (typeof elem === 'function') return elem(value);
         
         if (elem.value !== undefined) {
             elem.value = value;
@@ -51,12 +57,15 @@ module.exports = function (mappings) {
     }
     
     function get (elem) {
+        if (typeof elem === 'function') return elem();
+        
         if (elem.value !== undefined) return elem.value;
         if (editable(elem)) return elem.value;
         return elem.textContent || elem.innerText;
     }
     
     function editable (elem) {
+        if (typeof elem === 'function') return false;
         if (!elem || !elem.tagName) return false;
         var tag = elem.tagName.toUpperCase();
         return tag === 'INPUT' || tag === 'TEXTAREA';
