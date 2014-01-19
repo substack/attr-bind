@@ -23,9 +23,7 @@
 var bind = require('attr-bind')();
 
 var elems = document.querySelectorAll('*[binder]');
-for (var i = 0; i < elems.length; i++) {
-    bind(elems[i], elems[i].getAttribute('binder'));
-}
+for (var i = 0; i < elems.length; i++) bind(elems[i]);
 ```
 
 or you can use [attractor](https://npmjs.org/package/attractor):
@@ -46,7 +44,7 @@ var watch = require('observable')();
 watch(function (value) {
     console.log('value=' + value);
 });
-bind(watch, 'user-name');
+bind(watch);
 ```
 
 # methods
@@ -55,20 +53,22 @@ bind(watch, 'user-name');
 var binder = require('attr-bind')
 ```
 
-## var bind = binder(mappings)
+## var bind = binder(fn)
 
-Return a `bind()`
+Return a `bind()` function. Optionally you can pass in an
+[observable()](http://npmjs.org/package/observable)-style
+function watcher `fn`.
 
-## bind(elem, group)
+## bind(elem)
 
-Bind the element `elem` into the `group` string.
+Bind the element or [observable](http://npmjs.org/package/observable) `elem`.
 
 # install
 
 With [npm](https://npmjs.org) do:
 
 ```
-npm install -g attr-bind
+npm install attr-bind
 ```
 
 # license
