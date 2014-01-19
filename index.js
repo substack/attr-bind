@@ -1,19 +1,25 @@
-module.exports = function (mappings) {
-    var bindings = {};
-    if (!mappings) mappings = {};
+module.exports = function (cb) {
+    var elements = [];
+    var value;
+    if (cb) {
+        elements.push(cb);
+        value = cb();
+        cb(function (v) {
+            value = v;
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i] === cb) continue;
+                set(elements[i], value);
+            }
+        });
+    }
     
-    return function (elem, key) {
-        var b = bindings[key];
-        if (!b) {
-            b = bindings[key] = {
-                elements: [],
-                map: mappings[key] || function (x) { return x }
-            };
-            b.value = b.map(get(elem), elem);
+    return function (elem) {
+        if (value !== undefined) {
+            value = get(elem);
         }
-        else set(elem, b.value);
+        else set(elem, value);
         
-        b.elements.push(elem);
+        elements.push(elem);
         
         if (typeof elem === 'function') {
             elem(onchange);
@@ -25,13 +31,13 @@ module.exports = function (mappings) {
         }
         
         function onchange () {
-            var x = b.map(get(elem), elem);
-            if (x === b.value) return;
-            b.value = x;
+            var x = get(elem);
+            if (x === value) return;
+            value = x;
             
-            for (var i = 0; i < b.elements.length; i++) {
-                if (b.elements[i] === elem) continue;
-                set(b.elements[i], b.value);
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i] === elem) continue;
+                set(elements[i], value);
             }
         }
     };
