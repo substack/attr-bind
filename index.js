@@ -43,6 +43,7 @@ module.exports = function (cb) {
     };
     
     function set (elem, value) {
+        if (value === undefined) value = '';
         if (typeof value !== 'string') value = String(value);
         if (typeof elem === 'function') return elem(value);
         
