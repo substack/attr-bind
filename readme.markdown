@@ -44,7 +44,7 @@ var watch = require('observable')();
 watch(function (value) {
     console.log('value=' + value);
 });
-bind(watch);
+bind(watch, 'key');
 ```
 
 # methods
@@ -53,15 +53,18 @@ bind(watch);
 var binder = require('attr-bind')
 ```
 
-## var bind = binder(fn)
+## var bind = binder()
 
 Return a `bind()` function. Optionally you can pass in an
 [observable()](http://npmjs.org/package/observable)-style
 function watcher `fn`.
 
-## bind(elem)
+## bind.call(ctx, elem, key)
 
-Bind the element or [observable](http://npmjs.org/package/observable) `elem`.
+Bind the element or [observable](http://npmjs.org/package/observable) `elem` to
+the key at `key`.
+
+Look at `ctx.scope` for scope information.
 
 # install
 
