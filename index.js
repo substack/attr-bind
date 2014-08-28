@@ -1,25 +1,17 @@
-module.exports = function (cb) {
-    var elements = [];
-    var value;
-    if (cb) {
-        elements.push(cb);
-        value = cb();
-        cb(function (v) {
-            value = v;
-            for (var i = 0; i < elements.length; i++) {
-                if (elements[i] === cb) continue;
-                set(elements[i], value);
-            }
-        });
-    }
+module.exports = function () {
+    var elements = {};
+    var scope;
     
-    return function (elem) {
-        if (value !== undefined) {
-            value = get(elem);
-        }
-        else set(elem, value);
+    return function (elem, key) {
+        if (!scope) scope = this.scope || {};
         
-        elements.push(elem);
+        if (scope[key] !== undefined) {
+            scope[key] = get(elem);
+        }
+        else set(elem, scope[key]);
+        
+        if (!elements[key]) elements[key] = [];
+        elements[key].push(elem);
         
         if (typeof elem === 'function') {
             elem(onchange);
@@ -32,12 +24,13 @@ module.exports = function (cb) {
         
         function onchange () {
             var x = get(elem);
-            if (x === value) return;
-            value = x;
+            if (x === scope[key]) return;
+            scope[key] = x;
             
-            for (var i = 0; i < elements.length; i++) {
-                if (elements[i] === elem) continue;
-                set(elements[i], value);
+            var elems = elements[key];
+            for (var i = 0; i < elems.length; i++) {
+                if (elems[i] === elem) continue;
+                set(elems[i], scope[key]);
             }
         }
     };
@@ -78,3 +71,5 @@ module.exports = function (cb) {
         return tag === 'INPUT' || tag === 'TEXTAREA';
     }
 };
+
+function has (obj, key) { return {}.hasOwnProperty.call(obj, key) }
