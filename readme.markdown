@@ -64,7 +64,13 @@ function watcher `fn`.
 Bind the element or [observable](http://npmjs.org/package/observable) `elem` to
 the key at `key`.
 
-Look at `ctx.scope` for scope information.
+Look at `ctx.scope` for scope information. If there isn't already an entry set
+for `ctx.scope[key]`, create a new scope entry with
+[observ](https://npmjs.org/package/observ).
+
+* To update a observable, do: `ctx.scope[key].set(newVal)`.
+* To read an observable value, do: `ctx.scope[key]()`.
+* To track an observable's state, do: `ctx.scope[key](function (newVal) {})`.
 
 # install
 
