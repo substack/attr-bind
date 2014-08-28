@@ -18,12 +18,20 @@ module.exports = function () {
             values[key] = scope[key]();
         }
         else {
-            scope[key] = observ(get(elem));
+            scope[key] = observ();
+            scope[key].set(get(elem));
         }
         scope[key](function (value) {
             set(elem, value);
         });
         elements[key].push(scope[key]);
+        
+        if (scope[key].set) {
+            scope[key].set(get(elem));
+        }
+        else {
+            scope[key](get(elem));
+        }
         
         if (typeof elem === 'function') {
             elem(onchange);
