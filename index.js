@@ -1,17 +1,29 @@
+var observ = require('observ');
+
 module.exports = function () {
     var elements = {};
+    var values = {};
     var scope;
     
     return function (elem, key) {
         if (!scope) scope = this.scope || {};
         
-        if (scope[key] !== undefined) {
-            scope[key] = get(elem);
-        }
-        else set(elem, scope[key]);
-        
         if (!elements[key]) elements[key] = [];
         elements[key].push(elem);
+        
+        if (has(scope, key) && typeof scope[key] !== 'function') {
+            throw new Error('scope at key: ' + key + ' is not a function');
+        }
+        else if (has(scope, key)) {
+            values[key] = scope[key]();
+        }
+        else {
+            scope[key] = observ(get(elem));
+        }
+        scope[key](function (value) {
+            set(elem, value);
+        });
+        elements[key].push(scope[key]);
         
         if (typeof elem === 'function') {
             elem(onchange);
@@ -24,13 +36,13 @@ module.exports = function () {
         
         function onchange () {
             var x = get(elem);
-            if (x === scope[key]) return;
-            scope[key] = x;
+            if (x === values[key]) return;
+            values[key] = x;
             
             var elems = elements[key];
             for (var i = 0; i < elems.length; i++) {
                 if (elems[i] === elem) continue;
-                set(elems[i], scope[key]);
+                set(elems[i], values[key]);
             }
         }
     };
@@ -38,6 +50,9 @@ module.exports = function () {
     function set (elem, value) {
         if (value === undefined) value = '';
         if (typeof value !== 'string') value = String(value);
+        if (elem && typeof elem.set === 'function') {
+            return elem.set(value);
+        }
         if (typeof elem === 'function') return elem(value);
         
         if (elem.value !== undefined) {
