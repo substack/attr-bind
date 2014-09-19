@@ -3,10 +3,11 @@ var observ = require('observ');
 module.exports = function () {
     var elements = {};
     var values = {};
-    var scope;
+    var scope, sc;
     
     return function (elem, key) {
         if (!scope) scope = this.scope || {};
+        var g;
         
         if (!elements[key]) elements[key] = [];
         elements[key].push(elem);
@@ -16,21 +17,32 @@ module.exports = function () {
         }
         else if (has(scope, key)) {
             values[key] = scope[key]();
+            sc = scope[key];
+        }
+        else if (g = dotGet(scope, key)) {
+            if (typeof g.node === 'function') {
+                values[key] = g.node();
+                sc = g.node;
+            }
         }
         else {
             scope[key] = observ();
             scope[key].set(get(elem));
+            sc = scope[key];
         }
-        scope[key](function (value) {
+        
+        if (!sc) return;
+        
+        sc(function (value) {
             set(elem, value);
         });
-        elements[key].push(scope[key]);
+        elements[key].push(sc);
         
-        if (scope[key].set) {
-            scope[key].set(get(elem));
+        if (sc.set) {
+            sc.set(get(elem));
         }
         else {
-            scope[key](get(elem));
+            sc(get(elem));
         }
         
         if (typeof elem === 'function') {
@@ -95,4 +107,18 @@ module.exports = function () {
     }
 };
 
-function has (obj, key) { return {}.hasOwnProperty.call(obj, key) }
+function has (obj, key) {
+    return {}.hasOwnProperty.call(obj, key);
+}
+
+function dotGet (obj, key) {
+    var keys = key.split('.');
+    var node = obj;
+    for (var i = 0; i < keys.length; i++) {
+        if (!node) return undefined;
+        var k = keys[i];
+        if (!has(node, k)) return undefined;
+        node = node[k];
+    }
+    return { node: node };
+}
